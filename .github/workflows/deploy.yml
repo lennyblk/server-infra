@@ -1,0 +1,38 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Installer Ansible
+        run: |
+          pip install ansible
+          ansible-galaxy collection install community.docker
+
+      - name: Configurer la clé SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan lennyblk.dev >> ~/.ssh/known_hosts
+
+      - name: Créer le fichier vault password
+        run: echo "${{ secrets.VAULT_PASSWORD }}" > .vault_pass
+
+      - name: Lancer le playbook
+        run: |
+          ansible-playbook -i inventory.ini playbook.yml \
+            --vault-password-file .vault_pass
+
+      - name: Supprimer le vault password
+        if: always()
+        run: rm -f .vault_pass
