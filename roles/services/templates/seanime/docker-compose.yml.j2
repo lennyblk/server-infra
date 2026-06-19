@@ -1,0 +1,16 @@
+services:
+  seanime:
+    image: ju1js/seanime:latest
+    container_name: seanime
+    entrypoint: ["/app/seanime", "--host", "0.0.0.0", "--port", "43211", "--password", "{{ seanime_password }}"]
+    volumes:
+      - /opt/seanime/config:/home/seanime/.config/Seanime
+      - /opt/seanime/data:/data
+    restart: unless-stopped
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+    name: proxy

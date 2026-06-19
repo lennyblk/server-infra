@@ -1,0 +1,9 @@
+---
+- name: Setup VPS
+  hosts: vps
+  become: true
+
+  roles:
+    - base
+    - services
+    - caddy

@@ -1,0 +1,13 @@
+---
+- name: Déployer le Caddyfile
+  template:
+    src: Caddyfile.j2
+    dest: /root/portfolio/Caddyfile
+    mode: "0644"
+
+- name: Connecter Caddy au réseau proxy
+  command: docker network connect proxy caddy
+  ignore_errors: true
+
+- name: Recharger la config Caddy
+  command: docker exec caddy caddy reload --config /etc/caddy/Caddyfile

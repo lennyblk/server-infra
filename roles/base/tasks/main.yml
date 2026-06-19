@@ -1,0 +1,49 @@
+---
+- name: Mettre à jour apt
+  apt:
+    update_cache: yes
+    upgrade: safe
+
+- name: Installer les paquets de base
+  apt:
+    name:
+      - curl
+      - git
+      - ufw
+      - fail2ban
+      - ca-certificates
+      - gnupg
+    state: present
+
+- name: Vérifier si Docker est déjà installé
+  command: docker --version
+  register: docker_check
+  ignore_errors: true
+  changed_when: false
+
+- name: Installer Docker si absent
+  shell: curl -fsSL https://get.docker.com | sh
+  when: docker_check.failed
+
+- name: Autoriser SSH dans UFW
+  ufw:
+    rule: allow
+    port: "22"
+    proto: tcp
+
+- name: Autoriser HTTP dans UFW
+  ufw:
+    rule: allow
+    port: "80"
+    proto: tcp
+
+- name: Autoriser HTTPS dans UFW
+  ufw:
+    rule: allow
+    port: "443"
+    proto: tcp
+
+- name: Activer UFW (deny par défaut)
+  ufw:
+    state: enabled
+    policy: deny

@@ -1,0 +1,30 @@
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: n8n
+    restart: unless-stopped
+    environment:
+      - N8N_PROTOCOL=https
+      - N8N_HOST=n8n.lennyblk.dev
+      - WEBHOOK_URL=https://n8n.lennyblk.dev/
+      - GENERIC_TIMEZONE=Europe/Paris
+      - TZ=Europe/Paris
+      - N8N_SECURE_COOKIE=true
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+    env_file:
+      - .env
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - proxy
+
+volumes:
+  n8n_data:
+    external: true
+    name: n8n_data
+
+networks:
+  proxy:
+    external: true
+    name: proxy

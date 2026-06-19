@@ -1,0 +1,74 @@
+---
+- name: Supprimer les anciens fichiers .yaml (remplacés par .yml)
+  file:
+    path: "/root/compose/{{ item }}"
+    state: absent
+  loop:
+    - jellyfin/docker-compose.yaml
+    - suwayomi/docker-compose.yaml
+    - seanime/docker-compose.yaml
+
+- name: Créer le réseau Docker proxy
+  community.docker.docker_network:
+    name: proxy
+    state: present
+
+- name: Créer les dossiers de services
+  file:
+    path: "/root/compose/{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - jellyfin
+    - suwayomi
+    - seanime
+    - docmost
+    - portainer
+    - n8n
+
+- name: Déployer les compose files statiques
+  copy:
+    src: "{{ item }}/"
+    dest: "/root/compose/{{ item }}/"
+  loop:
+    - jellyfin
+    - suwayomi
+    - portainer
+    - docmost
+    - n8n
+
+- name: Générer le compose seanime depuis template
+  template:
+    src: seanime/docker-compose.yml.j2
+    dest: /root/compose/seanime/docker-compose.yml
+    mode: "0644"
+
+- name: Générer le .env docmost depuis template
+  template:
+    src: docmost/.env.j2
+    dest: /root/compose/docmost/.env
+    mode: "0600"
+
+- name: Générer le .env n8n depuis template
+  template:
+    src: n8n/.env.j2
+    dest: /root/compose/n8n/.env
+    mode: "0600"
+
+- name: Supprimer l'ancien container n8n lancé manuellement
+  community.docker.docker_container:
+    name: n8n
+    state: absent
+    force_kill: yes
+
+- name: Démarrer les services
+  community.docker.docker_compose_v2:
+    project_src: "/root/compose/{{ item }}"
+    state: present
+  loop:
+    - jellyfin
+    - suwayomi
+    - seanime
+    - docmost
+    - portainer
+    - n8n

@@ -1,0 +1,27 @@
+services:
+  suwayomi:
+    image: ghcr.io/suwayomi/tachidesk:stable
+    container_name: suwayomi
+    environment:
+      - TZ=Europe/Paris
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /opt/suwayomi:/home/suwayomi/.local/share/Tachidesk
+    restart: unless-stopped
+    networks:
+      - proxy
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - TZ=Europe/Paris
+    restart: unless-stopped
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+    name: proxy
