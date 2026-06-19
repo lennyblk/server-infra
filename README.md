@@ -19,30 +19,29 @@ Internet
     ▼
  Caddy :443
     │  (Docker proxy network)
-    ├── lennyblk.dev           → portfolio-app:4173
-    ├── cinenode.lennyblk.dev  → cinenode-app:3636
-    ├── jellyfin.lennyblk.dev  → jellyfin:8096
-    ├── suwayomi.lennyblk.dev  → suwayomi:4567
-    ├── seanime.lennyblk.dev   → seanime:43211
-    ├── docmost.lennyblk.dev   → docmost:3000
-    ├── portainer.lennyblk.dev → portainer:9000
-    └── n8n.lennyblk.dev       → n8n:5678
+    ├── yourdomain.com               → portfolio
+    ├── jellyfin.yourdomain.com      → jellyfin:8096
+    ├── suwayomi.yourdomain.com      → suwayomi:4567
+    ├── seanime.yourdomain.com       → seanime:43211
+    ├── docmost.yourdomain.com       → docmost:3000
+    ├── portainer.yourdomain.com     → portainer:9000
+    └── n8n.yourdomain.com           → n8n:5678
 ```
 
 All services share a single Docker `proxy` network. No ports are exposed directly on the host except Caddy's 80/443.
 
 ## Services
 
-| Service | Description | Domain |
-|---------|-------------|--------|
-| Jellyfin | Media server | jellyfin.lennyblk.dev |
-| Suwayomi | Manga reader | suwayomi.lennyblk.dev |
-| FlareSolverr | Cloudflare bypass for Suwayomi | internal |
-| Seanime | Anime manager | seanime.lennyblk.dev |
-| Docmost | Wiki / note-taking | docmost.lennyblk.dev |
-| Portainer | Docker UI | portainer.lennyblk.dev |
-| n8n | Workflow automation | n8n.lennyblk.dev |
-| Caddy | Reverse proxy | — |
+| Service | Description |
+|---------|-------------|
+| Jellyfin | Media server |
+| Suwayomi | Manga reader |
+| FlareSolverr | Cloudflare bypass for Suwayomi (internal) |
+| Seanime | Anime manager |
+| Docmost | Wiki / note-taking |
+| Portainer | Docker UI |
+| n8n | Workflow automation |
+| Caddy | Reverse proxy |
 
 ## Repository structure
 
@@ -112,7 +111,7 @@ This repo is designed to be reusable. To deploy on your own VPS:
    ansible-vault create group_vars/all/vault.yml
    ```
    Fill it with your own values (passwords, rclone tokens, etc.)
-3. **Update the Caddyfile** — replace `lennyblk.dev` with your own domain in `roles/caddy/templates/Caddyfile.j2`
+3. **Update the Caddyfile** — replace the domain names in `roles/caddy/templates/Caddyfile.j2` with your own
 4. **Run the playbook**:
    ```bash
    ansible-playbook -i inventory.ini playbook.yml --ask-vault-pass
@@ -135,9 +134,9 @@ For GitHub Actions, add these 3 repository secrets:
 
 ## Backup
 
-Automatic backup every Sunday at 3am to Google Drive via rclone.
+Automatic weekly backup to Google Drive via rclone.
 
 Backed up:
-- `/root/compose/` — all compose files
-- `/opt/suwayomi/`, `/opt/seanime/` — app data
-- Docker volumes: `docmost`, `n8n_data`, `portainer_data`, `portfolio_caddy_data`
+- All compose files
+- App data directories
+- Docker named volumes
