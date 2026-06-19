@@ -1,0 +1,32 @@
+---
+- name: Installer rclone
+  shell: curl https://rclone.org/install.sh | bash
+  args:
+    creates: /usr/bin/rclone
+
+- name: Créer le dossier config rclone
+  file:
+    path: /root/.config/rclone
+    state: directory
+    mode: "0700"
+
+- name: Déployer la config rclone
+  template:
+    src: rclone.conf.j2
+    dest: /root/.config/rclone/rclone.conf
+    mode: "0600"
+
+- name: Déployer le script de backup
+  copy:
+    src: backup.sh
+    dest: /root/backup.sh
+    mode: "0755"
+
+- name: Configurer le cron de backup
+  cron:
+    name: "Backup hebdomadaire Google Drive"
+    weekday: "0"
+    hour: "3"
+    minute: "0"
+    job: "/root/backup.sh >> /root/backup.log 2>&1"
+    user: root
