@@ -22,6 +22,12 @@
     dest: /root/backup.sh
     mode: "0755"
 
+- name: Déployer le script de restore
+  copy:
+    src: restore.sh
+    dest: /root/restore.sh
+    mode: "0755"
+
 - name: Configurer le cron de backup
   cron:
     name: "Backup hebdomadaire Google Drive"
