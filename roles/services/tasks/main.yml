@@ -63,6 +63,12 @@
     dest: /root/compose/hoodly/.env
     mode: "0600"
 
+- name: Authentification GHCR pour images hoodly
+  community.docker.docker_login:
+    registry: ghcr.io
+    username: lennyblk
+    password: "{{ hoodly_ghcr_pat }}"
+
 - name: Supprimer l'ancien container n8n lancé manuellement
   community.docker.docker_container:
     name: n8n
