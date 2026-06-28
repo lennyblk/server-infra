@@ -1,14 +1,15 @@
 # server-infra
 
-Infrastructure as Code pour mon VPS personnel — recrée l'environnement complet en une commande.
+Infrastructure as Code for my personal VPS — rebuilds the entire environment with a single command.
 
 ## Stack
 
-- **Ansible** — provisioning et déploiement
-- **Docker + Docker Compose** — conteneurisation de tous les services
-- **Caddy** — reverse proxy avec TLS automatique (Let's Encrypt)
-- **Ansible Vault** — chiffrement des secrets
-- **Tailscale** — VPN mesh pour accès privé
+- **Ansible** — provisioning and deployment
+- **Docker + Docker Compose** — containerization of all services
+- **Caddy** — reverse proxy with automatic TLS (Let's Encrypt)
+- **Ansible Vault** — secrets encryption
+- **GitHub Actions** — automatic deployment on push
+- **Tailscale** — mesh VPN for private access
 
 ## Architecture
 
@@ -17,109 +18,125 @@ Internet
     │
     ▼
  Caddy :443
-    │  (réseau Docker proxy)
-    ├── lennyblk.dev          → portfolio-app:4173
-    ├── cinenode.lennyblk.dev → cinenode-app:3636
-    ├── jellyfin.lennyblk.dev → jellyfin:8096
-    ├── suwayomi.lennyblk.dev → suwayomi:4567
-    ├── seanime.lennyblk.dev  → seanime:43211
-    ├── docmost.lennyblk.dev  → docmost:3000
-    ├── portainer.lennyblk.dev→ portainer:9000
-    └── n8n.lennyblk.dev      → n8n:5678
+    │  (Docker proxy network)
+    ├── yourdomain.com               → portfolio
+    ├── jellyfin.yourdomain.com      → jellyfin:8096
+    ├── suwayomi.yourdomain.com      → suwayomi:4567
+    ├── seanime.yourdomain.com       → seanime:43211
+    ├── docmost.yourdomain.com       → docmost:3000
+    ├── portainer.yourdomain.com     → portainer:9000
+    └── n8n.yourdomain.com           → n8n:5678
 ```
 
-Tous les services partagent le réseau Docker `proxy`. Aucun port n'est exposé directement sur l'hôte sauf le 80/443 de Caddy.
+All services share a single Docker `proxy` network. No ports are exposed directly on the host except Caddy's 80/443.
 
-## Services déployés
+## Services
 
-| Service | Description | Domaine |
-|---------|-------------|---------|
-| Jellyfin | Serveur média | jellyfin.lennyblk.dev |
-| Suwayomi | Lecteur manga | suwayomi.lennyblk.dev |
-| FlareSolverr | Bypass Cloudflare pour Suwayomi | interne |
-| Seanime | Gestionnaire anime | seanime.lennyblk.dev |
-| Docmost | Wiki / prise de notes | docmost.lennyblk.dev |
-| Portainer | Interface Docker | portainer.lennyblk.dev |
-| n8n | Automatisation de workflows | n8n.lennyblk.dev |
-| Caddy | Reverse proxy | — |
+| Service | Description |
+|---------|-------------|
+| Jellyfin | Media server |
+| Suwayomi | Manga reader |
+| FlareSolverr | Cloudflare bypass for Suwayomi (internal) |
+| Seanime | Anime manager |
+| Docmost | Wiki / note-taking |
+| Portainer | Docker UI |
+| n8n | Workflow automation |
+| Caddy | Reverse proxy |
 
-## Prérequis
+## Repository structure
 
-- Python 3.x et pip
-- Accès SSH au VPS (clé Ed25519)
-- Ansible installé en local
+```
+server-infra/
+├── .github/workflows/
+│   └── deploy.yml             # CI/CD pipeline
+├── inventory.ini              # Server declaration
+├── playbook.yml               # Ansible entry point
+├── group_vars/
+│   └── all/
+│       └── vault.yml          # Encrypted secrets (Ansible Vault)
+└── roles/
+    ├── base/                  # System packages, Docker, UFW
+    ├── caddy/                 # Reverse proxy config
+    ├── services/              # Docker apps deployment
+    └── backup/                # Backup script and cron job
+```
+
+## Prerequisites
+
+- Python 3.x and pip
+- SSH access to the VPS (Ed25519 key)
+- Ansible installed locally
 
 ```bash
 pip install ansible
 ansible-galaxy collection install community.docker
 ```
 
-## Structure du repo
+## Usage
 
-```
-server-infra/
-├── inventory.ini              # Déclaration du VPS
-├── playbook.yml               # Point d'entrée Ansible
-├── group_vars/
-│   └── all/
-│       └── vault.yml          # Secrets chiffrés (Ansible Vault)
-└── roles/
-    ├── base/                  # Paquets système, Docker, UFW
-    ├── caddy/                 # Config reverse proxy
-    ├── services/              # Déploiement des apps Docker
-    └── backup/                # Script de backup + cron (à venir)
-```
-
-## Utilisation
-
-### Premier déploiement
+### First deployment
 
 ```bash
 git clone git@github.com:lennyblk/server-infra.git
 cd server-infra
 
-# Tester la connexion au VPS
+# Test connection to the VPS
 ansible vps -i inventory.ini -m ping
 
-# Déployer l'infrastructure complète
+# Deploy the full infrastructure
 ansible-playbook -i inventory.ini playbook.yml --ask-vault-pass
 ```
 
-### Ajouter un nouveau service
+### Add a new service
 
-1. Créer le dossier `roles/services/files/<nom-service>/`
-2. Y ajouter un `docker-compose.yml` avec le réseau `proxy` en external
-3. Ajouter le service dans `roles/services/tasks/main.yml`
-4. Ajouter une entrée dans `roles/caddy/templates/Caddyfile.j2`
-5. Relancer le playbook
+1. Create `roles/services/files/<service-name>/`
+2. Add a `docker-compose.yml` using the `proxy` network as external
+3. Add the service to `roles/services/tasks/main.yml`
+4. Add a route in `roles/caddy/templates/Caddyfile.j2`
+5. Re-run the playbook
 
-### Modifier un service existant
-
-```bash
-# Éditer le fichier concerné, puis :
-ansible-playbook -i inventory.ini playbook.yml --ask-vault-pass
-```
-
-Ansible détecte automatiquement ce qui a changé et n'applique que le diff.
-
-### Éditer les secrets
+### Edit secrets
 
 ```bash
 ansible-vault edit group_vars/all/vault.yml
 ```
 
-## Sécurité
+## Fork & Deploy on your own server
 
-- Les secrets (mots de passe, tokens) sont chiffrés via Ansible Vault — jamais en clair dans le repo
-- UFW actif : seuls les ports 22, 80 et 443 sont ouverts
-- fail2ban installé
-- Aucun service n'expose de port directement, tout passe par Caddy
+This repo is designed to be reusable. To deploy on your own VPS:
+
+1. **Update `inventory.ini`** with your server's IP or domain
+2. **Create your own secrets** — delete `group_vars/all/vault.yml` and create a new one:
+   ```bash
+   ansible-vault create group_vars/all/vault.yml
+   ```
+   Fill it with your own values (passwords, rclone tokens, etc.)
+3. **Update the Caddyfile** — replace the domain names in `roles/caddy/templates/Caddyfile.j2` with your own
+4. **Run the playbook**:
+   ```bash
+   ansible-playbook -i inventory.ini playbook.yml --ask-vault-pass
+   ```
+
+For GitHub Actions, add these 3 repository secrets:
+
+| Secret | Value |
+|--------|-------|
+| `SSH_PRIVATE_KEY` | Content of your `~/.ssh/id_ed25519` |
+| `VAULT_PASSWORD` | Your Ansible Vault password |
+| `VPS_HOST` | Your server domain or IP |
+
+## Security
+
+- Secrets are encrypted with Ansible Vault — never stored in plaintext in the repo
+- UFW enabled: only ports 22, 80 and 443 are open
+- fail2ban installed
+- No service exposes ports directly — all traffic goes through Caddy
 
 ## Backup
 
-Backup automatique chaque dimanche à 3h vers Google Drive via rclone.
+Automatic weekly backup to Google Drive via rclone.
 
-Éléments sauvegardés :
-- `/root/compose/` — tous les compose files
-- `/opt/suwayomi/`, `/opt/seanime/` — données des apps
-- Volumes Docker : `docmost`, `n8n_data`, `portainer_data`, `portfolio_caddy_data`
+Backed up:
+- All compose files
+- App data directories
+- Docker named volumes
