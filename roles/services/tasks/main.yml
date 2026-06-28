@@ -25,7 +25,6 @@
     - docmost
     - portainer
     - n8n
-    - hoodly
 
 - name: Déployer les compose files statiques
   copy:
@@ -37,7 +36,6 @@
     - portainer
     - docmost
     - n8n
-    - hoodly
 
 - name: Générer le compose seanime depuis template
   template:
@@ -57,17 +55,6 @@
     dest: /root/compose/n8n/.env
     mode: "0600"
 
-- name: Générer le .env hoodly depuis template
-  template:
-    src: hoodly/.env.j2
-    dest: /root/compose/hoodly/.env
-    mode: "0600"
-
-- name: Authentification GHCR pour images hoodly
-  community.docker.docker_login:
-    registry: ghcr.io
-    username: lennyblk
-    password: "{{ hoodly_ghcr_pat }}"
 
 - name: Supprimer l'ancien container n8n lancé manuellement
   community.docker.docker_container:
@@ -86,4 +73,3 @@
     - docmost
     - portainer
     - n8n
-    - hoodly
