@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     environment:
       - NO_CORS=1
-      - AUTO_SERVER_URL=1
+      - SERVER_URL=https://stremio.lennyblk.dev/
     volumes:
       - stremio_data:/root/.stremio-server
     networks:
