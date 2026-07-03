@@ -24,9 +24,7 @@ Internet
     ├── seanime.yourdomain.com       → seanime:43211
     ├── docmost.yourdomain.com       → docmost:3000
     ├── portainer.yourdomain.com     → portainer:9000
-    ├── n8n.yourdomain.com           → n8n:5678
-    ├── stremio.yourdomain.com       → stremio:8080
-    └── nuvio.yourdomain.com         → nuvio-addon:7000
+    └── n8n.yourdomain.com           → n8n:5678
 ```
 
 All services share a single Docker `proxy` network. No ports are exposed directly on the host except Caddy's 80/443.
@@ -41,8 +39,6 @@ All services share a single Docker `proxy` network. No ports are exposed directl
 | Docmost | Wiki / note-taking |
 | Portainer | Docker UI |
 | n8n | Workflow automation |
-| Stremio | Self-hosted media center (server + web UI) |
-| Nuvio | Stremio addon — HTTP streaming sources (built from source, requires `tmdb_api_key`) |
 | Caddy | Reverse proxy |
 
 ## Repository structure
@@ -102,8 +98,6 @@ ansible-playbook -i inventory.ini playbook.yml --ask-vault-pass
 ```bash
 ansible-vault edit group_vars/all/vault.yml
 ```
-
-Required key for Nuvio: `tmdb_api_key` (free key from [themoviedb.org/settings/api](https://www.themoviedb.org/settings/api)).
 
 ## Fork & Deploy on your own server
 

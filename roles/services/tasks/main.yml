@@ -23,7 +23,6 @@
     - docmost
     - portainer
     - n8n
-    - stremio
 
 - name: Déployer les compose files statiques
   copy:
@@ -34,31 +33,12 @@
     - portainer
     - docmost
     - n8n
-    - stremio
 
 - name: Générer le compose seanime depuis template
   template:
     src: seanime/docker-compose.yml.j2
     dest: /root/compose/seanime/docker-compose.yml
     mode: "0644"
-
-- name: Cloner/mettre à jour le source Nuvio Streams
-  ansible.builtin.git:
-    repo: https://github.com/tapframe/NuvioStreamsAddon.git
-    dest: /root/compose/nuvio
-    version: master
-    force: true
-
-- name: Déployer l'override compose Nuvio (réseau proxy, pas d'exposition directe)
-  copy:
-    src: nuvio/docker-compose.override.yml
-    dest: /root/compose/nuvio/docker-compose.override.yml
-
-- name: Générer le .env Nuvio depuis template
-  template:
-    src: nuvio/.env.j2
-    dest: /root/compose/nuvio/.env
-    mode: "0600"
 
 - name: Générer le .env docmost depuis template
   template:
@@ -89,10 +69,3 @@
     - docmost
     - portainer
     - n8n
-    - stremio
-
-- name: Démarrer Nuvio (rebuild si le source a changé)
-  community.docker.docker_compose_v2:
-    project_src: /root/compose/nuvio
-    state: present
-    build: always
