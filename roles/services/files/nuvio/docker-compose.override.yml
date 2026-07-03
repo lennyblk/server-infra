@@ -1,0 +1,10 @@
+services:
+  nuvio-addon:
+    ports: !reset []
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+    name: proxy

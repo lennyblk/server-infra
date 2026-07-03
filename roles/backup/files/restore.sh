@@ -31,7 +31,7 @@ fi
 
 # --- Arrêt de tous les containers ---
 log "Arrêt des containers..."
-docker stop suwayomi seanime flaresolverr jellyfin docmost n8n portainer 2>/dev/null || true
+docker stop suwayomi seanime flaresolverr docmost n8n portainer 2>/dev/null || true
 
 # --- Restauration compose files ---
 log "Restauration compose files..."
@@ -78,7 +78,7 @@ done
 
 # --- Redémarrage des containers ---
 log "Redémarrage des containers..."
-docker start suwayomi seanime flaresolverr jellyfin docmost n8n portainer 2>/dev/null || true
+docker start suwayomi seanime flaresolverr docmost n8n portainer 2>/dev/null || true
 
 log "========================================"
 log "Restauration terminée avec succès"
