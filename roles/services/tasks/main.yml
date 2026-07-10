@@ -29,6 +29,7 @@
     - dashdot
     - radarr
     - jellyfin
+    - bazarr
 
 - name: Déployer les compose files statiques
   copy:
@@ -45,6 +46,7 @@
     - dashdot
     - radarr
     - jellyfin
+    - bazarr
 
 - name: Générer le compose seanime depuis template
   template:
@@ -86,3 +88,4 @@
     - dashdot
     - radarr
     - jellyfin
+    - bazarr
