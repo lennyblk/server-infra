@@ -30,7 +30,8 @@ Internet
     ├── qbittorrent.yourdomain.com          → qbittorrent:8080
     ├── dashdot.yourdomain.com              → dashdot:3001
     ├── radarr.yourdomain.com               → radarr:7878
-    └── jellyfin.yourdomain.com             → jellyfin:8096
+    ├── jellyfin.yourdomain.com             → jellyfin:8096
+    └── bazarr.yourdomain.com               → bazarr:6767
 ```
 
 All services share a single Docker `proxy` network. No ports are exposed directly on the host except Caddy's 80/443.
@@ -52,6 +53,7 @@ All services share a single Docker `proxy` network. No ports are exposed directl
 | Dashdot | dashdot.yourdomain.com | Server metrics dashboard |
 | Radarr | radarr.yourdomain.com | Movie manager |
 | Jellyfin | jellyfin.yourdomain.com | Media server (Netflix-like) |
+| Bazarr | bazarr.yourdomain.com | Automatic subtitles downloader |
 
 ## Repository structure
 
