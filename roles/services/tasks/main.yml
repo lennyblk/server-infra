@@ -23,6 +23,7 @@
     - docmost
     - portainer
     - n8n
+    - sonarr
 
 - name: Déployer les compose files statiques
   copy:
@@ -33,6 +34,7 @@
     - portainer
     - docmost
     - n8n
+    - sonarr
 
 - name: Générer le compose seanime depuis template
   template:
@@ -69,3 +71,4 @@
     - docmost
     - portainer
     - n8n
+    - sonarr

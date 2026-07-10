@@ -10,7 +10,7 @@ DATE=$(date +%Y%m%d_%H%M)
 LOG="/root/restore.log"
 REMOTE="googledrive:/backups"
 log() {
-  echo "[$DATE] $1" | tee -a "$LOG
+    echo "[$DATE] $1" | tee -a "$LOG"
 }
 
 log "========================================"
