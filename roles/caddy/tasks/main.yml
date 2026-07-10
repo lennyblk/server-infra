@@ -9,5 +9,5 @@
   command: docker network connect proxy caddy
   ignore_errors: true
 
-- name: Recharger la config Caddy
-  command: docker exec caddy caddy reload --config /etc/caddy/Caddyfile
+- name: Redémarrer Caddy
+  command: docker restart caddy

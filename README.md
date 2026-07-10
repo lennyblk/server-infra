@@ -20,7 +20,6 @@ Internet
  Caddy :443
     │  (Docker proxy network)
     ├── yourdomain.com               → portfolio
-    ├── jellyfin.yourdomain.com      → jellyfin:8096
     ├── suwayomi.yourdomain.com      → suwayomi:4567
     ├── seanime.yourdomain.com       → seanime:43211
     ├── docmost.yourdomain.com       → docmost:3000
@@ -34,7 +33,6 @@ All services share a single Docker `proxy` network. No ports are exposed directl
 
 | Service | Description |
 |---------|-------------|
-| Jellyfin | Media server |
 | Suwayomi | Manga reader |
 | FlareSolverr | Cloudflare bypass for Suwayomi (internal) |
 | Seanime | Anime manager |

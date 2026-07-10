@@ -4,7 +4,6 @@
     path: "/root/compose/{{ item }}"
     state: absent
   loop:
-    - jellyfin/docker-compose.yaml
     - suwayomi/docker-compose.yaml
     - seanime/docker-compose.yaml
 
@@ -19,7 +18,6 @@
     state: directory
     mode: "0755"
   loop:
-    - jellyfin
     - suwayomi
     - seanime
     - docmost
@@ -31,7 +29,6 @@
     src: "{{ item }}/"
     dest: "/root/compose/{{ item }}/"
   loop:
-    - jellyfin
     - suwayomi
     - portainer
     - docmost
@@ -55,6 +52,7 @@
     dest: /root/compose/n8n/.env
     mode: "0600"
 
+
 - name: Supprimer l'ancien container n8n lancé manuellement
   community.docker.docker_container:
     name: n8n
@@ -66,7 +64,6 @@
     project_src: "/root/compose/{{ item }}"
     state: present
   loop:
-    - jellyfin
     - suwayomi
     - seanime
     - docmost
