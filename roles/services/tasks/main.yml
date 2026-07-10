@@ -27,7 +27,6 @@
     - prowlarr
     - qbittorrent
     - homarr
-    - vaultwarden
 
 - name: Déployer les compose files statiques
   copy:
@@ -42,7 +41,6 @@
     - prowlarr
     - qbittorrent
     - homarr
-    - vaultwarden
 
 - name: Générer le compose seanime depuis template
   template:
@@ -61,13 +59,6 @@
     src: n8n/.env.j2
     dest: /root/compose/n8n/.env
     mode: "0600"
-
-- name: Générer le .env vaultwarden depuis template
-  template:
-    src: vaultwarden/.env.j2
-    dest: /root/compose/vaultwarden/.env
-    mode: "0600"
-
 
 - name: Supprimer l'ancien container n8n lancé manuellement
   community.docker.docker_container:
@@ -89,4 +80,3 @@
     - prowlarr
     - qbittorrent
     - homarr
-    - vaultwarden
