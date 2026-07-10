@@ -27,6 +27,8 @@
     - prowlarr
     - qbittorrent
     - dashdot
+    - radarr
+    - jellyfin
 
 - name: Déployer les compose files statiques
   copy:
@@ -41,6 +43,8 @@
     - prowlarr
     - qbittorrent
     - dashdot
+    - radarr
+    - jellyfin
 
 - name: Générer le compose seanime depuis template
   template:
@@ -80,3 +84,5 @@
     - prowlarr
     - qbittorrent
     - dashdot
+    - radarr
+    - jellyfin

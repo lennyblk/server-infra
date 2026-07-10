@@ -19,27 +19,39 @@ Internet
     ▼
  Caddy :443
     │  (Docker proxy network)
-    ├── yourdomain.com               → portfolio
-    ├── suwayomi.yourdomain.com      → suwayomi:4567
-    ├── seanime.yourdomain.com       → seanime:43211
-    ├── docmost.yourdomain.com       → docmost:3000
-    ├── portainer.yourdomain.com     → portainer:9000
-    └── n8n.yourdomain.com           → n8n:5678
+    ├── yourdomain.com                      → portfolio
+    ├── suwayomi.yourdomain.com             → suwayomi:4567
+    ├── seanime.yourdomain.com              → seanime:43211
+    ├── docmost.yourdomain.com              → docmost:3000
+    ├── portainer.yourdomain.com            → portainer:9000
+    ├── n8n.yourdomain.com                  → n8n:5678
+    ├── sonarr.yourdomain.com               → sonarr:8989
+    ├── prowlarr.yourdomain.com             → prowlarr:9696
+    ├── qbittorrent.yourdomain.com          → qbittorrent:8080
+    ├── dashdot.yourdomain.com              → dashdot:3001
+    ├── radarr.yourdomain.com               → radarr:7878
+    └── jellyfin.yourdomain.com             → jellyfin:8096
 ```
 
 All services share a single Docker `proxy` network. No ports are exposed directly on the host except Caddy's 80/443.
 
 ## Services
 
-| Service | Description |
-|---------|-------------|
-| Suwayomi | Manga reader |
-| FlareSolverr | Cloudflare bypass for Suwayomi (internal) |
-| Seanime | Anime manager |
-| Docmost | Wiki / note-taking |
-| Portainer | Docker UI |
-| n8n | Workflow automation |
-| Caddy | Reverse proxy |
+| Service | URL | Description |
+|---------|-----|-------------|
+| Portfolio | yourdomain.com | Personal website |
+| Suwayomi | suwayomi.yourdomain.com | Manga reader |
+| FlareSolverr | internal | Cloudflare bypass for Suwayomi |
+| Seanime | seanime.yourdomain.com | Anime manager |
+| Docmost | docmost.yourdomain.com | Wiki / note-taking |
+| Portainer | portainer.yourdomain.com | Docker UI |
+| n8n | n8n.yourdomain.com | Workflow automation |
+| Sonarr | sonarr.yourdomain.com | TV show manager |
+| Prowlarr | prowlarr.yourdomain.com | Indexer manager |
+| qBittorrent | qbittorrent.yourdomain.com | Torrent client |
+| Dashdot | dashdot.yourdomain.com | Server metrics dashboard |
+| Radarr | radarr.yourdomain.com | Movie manager |
+| Jellyfin | jellyfin.yourdomain.com | Media server (Netflix-like) |
 
 ## Repository structure
 
@@ -89,33 +101,31 @@ ansible-playbook -i inventory.ini playbook.yml --ask-vault-pass
 
 1. Create `roles/services/files/<service-name>/`
 2. Add a `docker-compose.yml` using the `proxy` network as external
-3. Add the service to `roles/services/tasks/main.yml`
+3. Add the service to `roles/services/tasks/main.yml` (3 loops: folders, copy, start)
 4. Add a route in `roles/caddy/templates/Caddyfile.j2`
-5. Re-run the playbook
+5. Push to main — GitHub Actions deploys automatically
 
 ### Edit secrets
 
 ```bash
+# On Linux/WSL only (Windows locale issue)
 ansible-vault edit group_vars/all/vault.yml
 ```
 
 ## Fork & Deploy on your own server
-
-This repo is designed to be reusable. To deploy on your own VPS:
 
 1. **Update `inventory.ini`** with your server's IP or domain
 2. **Create your own secrets** — delete `group_vars/all/vault.yml` and create a new one:
    ```bash
    ansible-vault create group_vars/all/vault.yml
    ```
-   Fill it with your own values (passwords, rclone tokens, etc.)
-3. **Update the Caddyfile** — replace the domain names in `roles/caddy/templates/Caddyfile.j2` with your own
+3. **Update the Caddyfile** — replace domain names in `roles/caddy/templates/Caddyfile.j2`
 4. **Run the playbook**:
    ```bash
    ansible-playbook -i inventory.ini playbook.yml --ask-vault-pass
    ```
 
-For GitHub Actions, add these 3 repository secrets:
+For GitHub Actions, add these repository secrets:
 
 | Secret | Value |
 |--------|-------|
@@ -125,8 +135,8 @@ For GitHub Actions, add these 3 repository secrets:
 
 ## Security
 
-- Secrets are encrypted with Ansible Vault — never stored in plaintext in the repo
-- UFW enabled: only ports 22, 80 and 443 are open
+- Secrets encrypted with Ansible Vault — never stored in plaintext
+- UFW enabled: only ports 22, 80 and 443 open
 - fail2ban installed
 - No service exposes ports directly — all traffic goes through Caddy
 
