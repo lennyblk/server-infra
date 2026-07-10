@@ -27,6 +27,7 @@
     - prowlarr
     - qbittorrent
     - homarr
+    - vaultwarden
 
 - name: Déployer les compose files statiques
   copy:
@@ -41,6 +42,7 @@
     - prowlarr
     - qbittorrent
     - homarr
+    - vaultwarden
 
 - name: Générer le compose seanime depuis template
   template:
@@ -58,6 +60,12 @@
   template:
     src: n8n/.env.j2
     dest: /root/compose/n8n/.env
+    mode: "0600"
+
+- name: Générer le .env vaultwarden depuis template
+  template:
+    src: vaultwarden/.env.j2
+    dest: /root/compose/vaultwarden/.env
     mode: "0600"
 
 
@@ -81,3 +89,4 @@
     - prowlarr
     - qbittorrent
     - homarr
+    - vaultwarden

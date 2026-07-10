@@ -1,0 +1,20 @@
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    environment:
+      - TZ=Europe/Paris
+      - SIGNUPS_ALLOWED=false
+      - DOMAIN=https://vaultwarden.lennyblk.dev
+    env_file:
+      - .env
+    volumes:
+      - /opt/vaultwarden:/data
+    restart: unless-stopped
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+    name: proxy
