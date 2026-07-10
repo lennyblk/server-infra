@@ -26,6 +26,7 @@
     - sonarr
     - prowlarr
     - qbittorrent
+    - homarr
 
 - name: Déployer les compose files statiques
   copy:
@@ -39,6 +40,7 @@
     - sonarr
     - prowlarr
     - qbittorrent
+    - homarr
 
 - name: Générer le compose seanime depuis template
   template:
@@ -78,3 +80,4 @@
     - sonarr
     - prowlarr
     - qbittorrent
+    - homarr
