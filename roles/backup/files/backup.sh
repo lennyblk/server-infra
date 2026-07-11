@@ -32,7 +32,7 @@ fi
 
 # --- Arrêt propre des containers ---
 log "Arrêt des containers..."
-docker stop suwayomi seanime flaresolverr 2>/dev/null || true
+docker stop suwayomi seanime flaresolverr sonarr radarr prowlarr qbittorrent jellyfin bazarr uptime-kuma dashdot 2>/dev/null || true
 
 # --- Backup fichiers de config ---
 log "Backup compose files..."
@@ -46,13 +46,28 @@ rclone sync /root/portfolio/ "$REMOTE/portfolio/" \
     --log-file="$LOG" --log-level INFO
 
 # --- Backup données apps ---
-log "Backup suwayomi..."
-rclone sync /opt/suwayomi/ "$REMOTE/opt/suwayomi/" \
-    --log-file="$LOG" --log-level INFO
+OPT_SERVICES=(
+    suwayomi
+    seanime
+    sonarr
+    radarr
+    prowlarr
+    qbittorrent
+    jellyfin
+    bazarr
+    uptime-kuma
+    dashdot
+)
 
-log "Backup seanime..."
-rclone sync /opt/seanime/ "$REMOTE/opt/seanime/" \
-    --log-file="$LOG" --log-level INFO
+for SERVICE in "${OPT_SERVICES[@]}"; do
+    if [ -d "/opt/$SERVICE" ]; then
+        log "Backup $SERVICE..."
+        rclone sync "/opt/$SERVICE/" "$REMOTE/opt/$SERVICE/" \
+            --log-file="$LOG" --log-level INFO
+    else
+        log "WARN: /opt/$SERVICE introuvable, ignoré"
+    fi
+done
 
 # --- Backup volumes Docker ---
 log "Backup volumes Docker..."
@@ -80,7 +95,7 @@ done
 
 # --- Redémarrage des containers ---
 log "Redémarrage des containers..."
-docker start suwayomi seanime flaresolverr 2>/dev/null || true
+docker start suwayomi seanime flaresolverr sonarr radarr prowlarr qbittorrent jellyfin bazarr uptime-kuma dashdot 2>/dev/null || true
 
 log "========================================"
 log "Backup terminé avec succès"

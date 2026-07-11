@@ -9,6 +9,7 @@ set -euo pipefail
 DATE=$(date +%Y%m%d_%H%M)
 LOG="/root/restore.log"
 REMOTE="googledrive:/backups"
+
 log() {
     echo "[$DATE] $1" | tee -a "$LOG"
 }
@@ -30,7 +31,7 @@ fi
 
 # --- Arrêt de tous les containers ---
 log "Arrêt des containers..."
-docker stop suwayomi seanime flaresolverr docmost n8n portainer 2>/dev/null || true
+docker stop suwayomi seanime flaresolverr docmost n8n portainer sonarr radarr prowlarr qbittorrent jellyfin bazarr uptime-kuma dashdot 2>/dev/null || true
 
 # --- Restauration compose files ---
 log "Restauration compose files..."
@@ -45,15 +46,25 @@ rclone sync "$REMOTE/portfolio/" /root/portfolio/ \
   --log-file="$LOG" --log-level INFO
 
 # --- Restauration données apps ---
-log "Restauration suwayomi..."
-mkdir -p /opt/suwayomi
-rclone sync "$REMOTE/opt/suwayomi/" /opt/suwayomi/ \
-  --log-file="$LOG" --log-level INFO
+OPT_SERVICES=(
+    suwayomi
+    seanime
+    sonarr
+    radarr
+    prowlarr
+    qbittorrent
+    jellyfin
+    bazarr
+    uptime-kuma
+    dashdot
+)
 
-log "Restauration seanime..."
-mkdir -p /opt/seanime
-rclone sync "$REMOTE/opt/seanime/" /opt/seanime/ \
-  --log-file="$LOG" --log-level INFO
+for SERVICE in "${OPT_SERVICES[@]}"; do
+    log "Restauration $SERVICE..."
+    mkdir -p "/opt/$SERVICE"
+    rclone sync "$REMOTE/opt/$SERVICE/" "/opt/$SERVICE/" \
+        --log-file="$LOG" --log-level INFO
+done
 
 # --- Restauration volumes Docker ---
 log "Restauration volumes Docker..."
@@ -77,7 +88,7 @@ done
 
 # --- Redémarrage des containers ---
 log "Redémarrage des containers..."
-docker start suwayomi seanime flaresolverr docmost n8n portainer 2>/dev/null || true
+docker start suwayomi seanime flaresolverr docmost n8n portainer sonarr radarr prowlarr qbittorrent jellyfin bazarr uptime-kuma dashdot 2>/dev/null || true
 
 log "========================================"
 log "Restauration terminée avec succès"

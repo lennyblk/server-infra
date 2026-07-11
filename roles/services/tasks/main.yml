@@ -30,6 +30,7 @@
     - radarr
     - jellyfin
     - bazarr
+    - uptime-kuma
 
 - name: Déployer les compose files statiques
   copy:
@@ -47,6 +48,7 @@
     - radarr
     - jellyfin
     - bazarr
+    - uptime-kuma
 
 - name: Générer le compose seanime depuis template
   template:
@@ -89,3 +91,4 @@
     - radarr
     - jellyfin
     - bazarr
+    - uptime-kuma
