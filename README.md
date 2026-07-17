@@ -31,7 +31,9 @@ Internet
     ├── dashdot.yourdomain.com              → dashdot:3001
     ├── radarr.yourdomain.com               → radarr:7878
     ├── jellyfin.yourdomain.com             → jellyfin:8096
-    └── bazarr.yourdomain.com               → bazarr:6767
+    ├── bazarr.yourdomain.com               → bazarr:6767
+    ├── yastream.yourdomain.com             → yastream:55913
+    └── stremio.yourdomain.com              → stremio:8080
 ```
 
 All services share a single Docker `proxy` network. No ports are exposed directly on the host except Caddy's 80/443.
@@ -54,6 +56,8 @@ All services share a single Docker `proxy` network. No ports are exposed directl
 | Radarr | radarr.yourdomain.com | Movie manager |
 | Jellyfin | jellyfin.yourdomain.com | Media server (Netflix-like) |
 | Bazarr | bazarr.yourdomain.com | Automatic subtitles downloader |
+| Yastream | yastream.yourdomain.com | Stremio addon — kdrama/asian drama streaming (no download) |
+| Stremio | stremio.yourdomain.com | Self-hosted Stremio web client + streaming server |
 
 ## Repository structure
 

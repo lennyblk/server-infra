@@ -1,0 +1,18 @@
+services:
+  yastream:
+    image: tamthai/yastream:latest
+    container_name: yastream
+    environment:
+      - TMDB_API_KEY={{ yastream_tmdb_api_key }}
+      - DOMAIN=yastream.lennyblk.dev
+      - PORT=55913
+    volumes:
+      - /opt/yastream/data:/app/data
+    restart: unless-stopped
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+    name: proxy

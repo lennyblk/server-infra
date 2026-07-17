@@ -1,0 +1,17 @@
+services:
+  stremio:
+    image: tsaridas/stremio-docker:latest
+    container_name: stremio
+    environment:
+      - NO_CORS=1
+      - AUTO_SERVER_URL=1
+    volumes:
+      - /opt/stremio:/root/.stremio-server
+    restart: unless-stopped
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+    name: proxy

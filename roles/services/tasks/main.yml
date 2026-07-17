@@ -31,6 +31,8 @@
     - jellyfin
     - bazarr
     - uptime-kuma
+    - yastream
+    - stremio
 
 - name: Déployer les compose files statiques
   copy:
@@ -49,11 +51,18 @@
     - jellyfin
     - bazarr
     - uptime-kuma
+    - stremio
 
 - name: Générer le compose seanime depuis template
   template:
     src: seanime/docker-compose.yml.j2
     dest: /root/compose/seanime/docker-compose.yml
+    mode: "0644"
+
+- name: Générer le compose yastream depuis template
+  template:
+    src: yastream/docker-compose.yml.j2
+    dest: /root/compose/yastream/docker-compose.yml
     mode: "0644"
 
 - name: Générer le .env docmost depuis template
@@ -92,3 +101,5 @@
     - jellyfin
     - bazarr
     - uptime-kuma
+    - yastream
+    - stremio
